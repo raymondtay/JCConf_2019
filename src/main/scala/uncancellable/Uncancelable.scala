@@ -57,10 +57,12 @@ object Uncancellable2 extends IOApp {
     val Timeout = 2.milli 
     val promise = Promise[Int] // will never finish
     val loooongIO : IO[Int] = IO.fromFuture(IO(promise.future))
+    def opThatMightVomit = IO.raiseError(new Exception("Ops"))
 
     (
       IO(println("Acquiring")) *> // kinda like logging but its not; don't do this.
-      sem1.acquire *> IO.raiseError(new Exception("Ops")) *>
+      sem1.acquire *>
+      opThatMightVomit *>
       sem2.acquire *>
       IO(println("Acquired"))
     ).handleErrorWith{err => IO(println("Error caught, cancelling Fiber...")) *> f.cancel}

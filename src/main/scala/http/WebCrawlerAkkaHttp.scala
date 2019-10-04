@@ -47,7 +47,7 @@ trait AkkaHttpResource {
   implicit val cs               = IO.contextShift(scala.concurrent.ExecutionContext.Implicits.global)
 
   def requestHttp1x(client: HttpExt, site: String) : IO[Unit] = {
-    IO.fromFuture(IO.pure[Future[HttpResponse]](client.singleRequest(HttpRequest(uri = site))))
+    IO.fromFuture(IO(client.singleRequest(HttpRequest(uri = site))))
       .flatMap(result => IO(println(result.status)))
       .handleErrorWith(error => IO(println("Error"))) *> IO.unit
   }
