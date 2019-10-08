@@ -13,16 +13,41 @@ To understand the `IO` monad, i thought this passage from the library's
 ```
 A value of type IO[A] is a computation which, when evaluated, can perform effects before returning a value of type A.
 
-IO values are pure, immutable values and thus preserves referential transparency, being usable in functional programming. An IO is a data structure that represents just a description of a side effectful computation.
+IO values are pure, immutable values and thus preserves referential transparency, being usable in functional programming.
+An IO is a data structure that represents just a description of a side effectful computation.
 
 IO can describe synchronous or asynchronous computations that:
-
-on evaluation yield exactly one result
-can end in either success or failure and in case of failure flatMap chains get short-circuited (IO implementing the algebra of MonadError)
-can be canceled, but note this capability relies on the user to provide cancellation logic
-Effects described via this abstraction are not evaluated until the “end of the world”, which is to say, when one of the “unsafe” methods are used. Effectful results are not memoized, meaning that memory overhead is minimal (and no leaks), and also that a single effect may be run multiple times in a referentially-transparent manner
-...
+- On evaluation yield exactly one result
+- Can end in either success or failure and in case of failure flatMap chains get short-circuited
+  (`IO` implementing the algebra of `MonadError`)
+- Can be canceled, but note this capability relies on the user to provide cancellation logic
+- Effects described via this abstraction are not evaluated until the “end of the world”, which is to say,
+  when one of the “unsafe” methods are used. Effectful results are not memoized, meaning that memory overhead
+  is minimal (and no leaks), and also that a single effect may be run multiple times in a
+  referentially-transparent manner ...
 ```
+
+### Code Examples
+
+There are largely 3 categories of code snippets and its broken down as follows:
+
+* Concurrent `IO` code which are either cancellable or not;
+  * Examples that illustrate how to describe asynchronous, concurrent code
+    which can describe _error-handling_;
+* Concurrent modelling of data structures;
+  * _Buffered Channel_ and _Skip Channel_ data structures are introduced and
+    implemented; these structures were lifted from the paper _"Concurrent
+    Haskell"
+* Applications of the `IO Monad`;
+  * `Writer Monad` integrated in an computation (e.g. `Fibonacci sequence`) and
+     introducing the [log4cats](https://github.com/ChristopherDavenport/log4cats);
+     the motivation is to demonstrate how the FP abstractions in
+     [cats](https://typelevel.org/cats) integrate nicely into `IO Monad`
+  * Modeled the `Resource` _acquire-release_ mechanism around the _http 1.x_
+    client provided by [akka-http](https://doc.akka.io/docs/akka-http/current/index.html) and readers can contrast
+    the approach taken by [http4s](https://http4s.org) to see how _regular_
+    things can be modeled into this approach
+
 
 ### Run
 
