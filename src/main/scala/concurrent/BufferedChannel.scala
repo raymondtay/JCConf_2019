@@ -167,11 +167,34 @@ object BufferedChannel extends cats.effect.IOApp {
         sum <- sumChannel(channel, 0L)
       } yield sum
 
+    // Concurrent writes with interfering reads.
+    def sumTask2 =
+      for {
+        channel <- newChannel[Int,IO]
+        _ <- writeChannel(channel, 1).start
+        _ <- writeChannel(channel, 2).start
+        _ <- writeChannel(channel, 3).start
+        _ <- writeChannel(channel, 4).start
+        _ <- readChannel(channel) *> readChannel(channel) *> readChannel(channel)
+        _ <- writeChannel(channel, 5).start
+        _ <- writeChannel(channel, 6).start
+        _ <- readChannel(channel) *> readChannel(channel) *> readChannel(channel)
+        _ <- writeChannel(channel, 7).start
+        _ <- writeChannel(channel, 8).start
+        _ <- writeChannel(channel, 9).start
+        sum <- sumChannel(channel, 0L)
+      } yield sum
+
     println(s"""
       Result of draining an channel is: ${putNDrain.unsafeRunSync}
       """)
+
     println(s"""
-      Result of summing an channel is: ${sumTask.unsafeRunSync}
+      Result of summing an channel with no reads is: ${sumTask.unsafeRunSync}
+      """)
+
+    println(s"""
+      Result of summing an channel with interfering reads is: ${sumTask2.unsafeRunSync}
       """)
 
     println(s"""
