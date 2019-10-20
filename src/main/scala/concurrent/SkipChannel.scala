@@ -78,9 +78,8 @@ trait SkipChannel {
     val F = implicitly[Concurrent[F]]
     for {
       pair <- sCh.main.take
-      _ <- sCh.main.put((value, List()))
-      f <- F.start(F.delay(pair._2.map(sem => sem.put(()))))
-      _ <- f.join
+      _    <- sCh.main.put((value, List()))
+      _    <- F.delay(pair._2.map(sem => sem.put(())))
      } yield { }
   }
 
@@ -130,8 +129,21 @@ object SkipChannnel extends cats.effect.IOApp with SkipChannel {
       c <- getSkipChan(channel)     // this should return "4"
     } yield (a, b, c)
 
+    def putNDrainTaskAsync = for {
+      channel <- newSkipChan[Int, IO]
+      f <- getSkipChan(channel).start // this should return "0"
+      r <- f.join
+      _ <- putSkipChan(channel, 0)
+      _ <- putSkipChan(channel, 1)
+      _ <- putSkipChan(channel, 2)
+    } yield r
+ 
     println(s"""
-      Result of writing and reading a skip-channel is: ${putNDrainTask.unsafeRunSync}
+      Result of writing and reading a skip-channel (sync) is: ${putNDrainTask.unsafeRunSync}
+      """)
+
+    println(s"""
+      Result of writing and reading a skip-channel (async) is: ${putNDrainTaskAsync.unsafeRunSync}
       """)
 
     println(s"""
