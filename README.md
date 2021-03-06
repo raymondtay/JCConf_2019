@@ -2,30 +2,12 @@
 
 ![Cats Friendly Badge](https://typelevel.org/cats/img/cats-badge-tiny.png)
 
-This scratchpad is what i used for my talk on the `IO` Monad in Scala delivered in Taipei (Taiwan) @ October 2019.
+This repository is what i used for my talk on the [IO Monad](https://typelevel.org/cats-effect/datatypes/io.html#introduction) in Scala delivered in Taipei (Taiwan) @ October 2019. You can see the recording of my talk [here](https://www.youtube.com/watch?v=qiZhmdatf98).
 
-
-### Motivation
-
-To understand the `IO` monad, i thought this passage from the library's
-[site](https://typelevel.org/cats-effect/datatypes/io.html#introduction) was particularly illuminating.
-
-```
-A value of type IO[A] is a computation which, when evaluated, can perform effects before returning a value of type A.
-
-IO values are pure, immutable values and thus preserves referential transparency, being usable in functional programming.
-An IO is a data structure that represents just a description of a side effectful computation.
-
-IO can describe synchronous or asynchronous computations that:
-- On evaluation yield exactly one result
-- Can end in either success or failure and in case of failure flatMap chains get short-circuited
-  (`IO` implementing the algebra of `MonadError`)
-- Can be canceled, but note this capability relies on the user to provide cancellation logic
-- Effects described via this abstraction are not evaluated until the “end of the world”, which is to say,
-  when one of the “unsafe” methods are used. Effectful results are not memoized, meaning that memory overhead
-  is minimal (and no leaks), and also that a single effect may be run multiple times in a
-  referentially-transparent manner ...
-```
+For this talk, i have prepared 18 code examples where i hope to impress the
+readers (thats you ☺) that the IO monad should be your de-facto approach to
+solving your problems when using the functional programming libraries like
+[Cats](https://typelevel.org/cats).
 
 ### Code Examples
 
